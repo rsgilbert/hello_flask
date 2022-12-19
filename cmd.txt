@@ -1,0 +1,9 @@
+// to run app:
+// with debugger on 
+// if app is called app.py 
+flask --debug run 
+
+// if app is called hello.py 
+flask --debug --app hello run 
+
+

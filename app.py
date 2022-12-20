@@ -1,18 +1,27 @@
-from flask import Flask, url_for, request, make_response, render_template
+from flask import Flask, redirect, abort, url_for, request, make_response, render_template
 from markupsafe import escape 
 from werkzeug.utils import secure_filename
 
 
 app = Flask(__name__)
 
+@app.get('/hello')
+def hello():
+    return 'Hello!'
 
+@app.route("/sample-abort")
+def sample_abortion():
+    abort(401)
 
-@app.route("/<name>")
-def hello(name):
-    print(f'name cookie is {request.cookies.get("name")}')
-    age = request.args.get('age', 'Not mentioned')
-    resp = make_response(render_template('hello.html', name=name, age=age))
-    resp.set_cookie('name', f'I am {name}')
+@app.route("/sample-redirect")
+def sample_redirection():
+    print('I am going to redirect you!')
+    return redirect(url_for('hello'))
+
+@app.errorhandler(401)
+def unauthorized(error):
+    resp = make_response(render_template('unauthorized.html'), 401)
+    resp.headers['X-App'] = 'Flask'
     return resp
 
 
@@ -24,3 +33,15 @@ def upload_file():
     print(f)
     f.save(f'./uploads/{secure_filename(f.filename)}')
     return f.filename
+
+
+@app.route('/me')
+def me():
+    return {
+        "username": "Gilbert",
+        "title": "Software Engineer"
+    }
+
+@app.route("/todos")
+def todos():
+    return ["Write app", "market", "ship"]
